@@ -46,7 +46,6 @@ const handleMessage = async (message) => {
   const author = message?.author;
   if (author) {
     const { id: authorId } = author;
-    // if (authorId !== "1106629774559936593") {
     if (authorId !== process.env.DC_BOT_ID) {
       const prompt = message.content;
       let completion;
