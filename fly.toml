@@ -1,0 +1,10 @@
+# fly.toml file generated for gpt-dc-bot on 2023-05-13T01:48:17+08:00
+
+app = "gpt-dc-bot"
+primary_region = "hkg"
+
+[build]
+  builder = "heroku/buildpacks:20"
+
+[env]
+  PORT = "8080"
