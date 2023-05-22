@@ -11,11 +11,11 @@ import fetch from 'node-fetch';
 import { Configuration, OpenAIApi } from "openai";
 import "dotenv/config";
 
-const openAIConfiguration = new Configuration({
-  apiKey: process.env.OPENAI_KEY,
-});
+// const openAIConfiguration = new Configuration({
+//   apiKey: process.env.OPENAI_KEY,
+// });
 
-const openai = new OpenAIApi(openAIConfiguration);
+// const openai = new OpenAIApi(openAIConfiguration);
 
 const client = new Client({
   intents: [
