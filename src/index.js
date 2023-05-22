@@ -11,11 +11,11 @@ import fetch from 'node-fetch';
 import { Configuration, OpenAIApi } from "openai";
 import "dotenv/config";
 
-// const openAIConfiguration = new Configuration({
-//   apiKey: process.env.OPENAI_KEY,
-// });
+const openAIConfiguration = new Configuration({
+  apiKey: process.env.OPENAI_KEY,
+});
 
-// const openai = new OpenAIApi(openAIConfiguration);
+const openai = new OpenAIApi(openAIConfiguration);
 
 const client = new Client({
   intents: [
@@ -72,23 +72,14 @@ const handleMessage = async (message) => {
         }
       }
       else {
-        let completion;
         let responseText;
         try {
           console.log('prompt', prompt)
           responseText = prompt
         }
-        // try {
-        //   completion = await openai.createCompletion({
-        //     prompt,
-        //     model: process.env.GPT_MODEL,
-        //     max_tokens: 2048,
-        //   });
-        //   responseText = completion.data?.choices?.[0]?.text || "";
-        // } 
         catch (e) {
           console.error(e);
-          responseText = "the api not working now";
+          responseText = "the bot not working now";
         }
         await message.channel.send(responseText);
       }
