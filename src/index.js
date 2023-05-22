@@ -6,6 +6,7 @@ import {
   // PartialMessage,
   Partials,
 } from "discord.js";
+import fetch from 'node-fetch';
 
 import { Configuration, OpenAIApi } from "openai";
 import "dotenv/config";
@@ -35,33 +36,62 @@ client.once(Events.ClientReady, async (c) => {
 });
 
 const handleMessage = async (message) => {
-  console.log("handleMessage", {
-    channelId: message.channelId,
-    guildId: message.guildId,
-    id: message.id,
-    content: message.content,
-    author: message?.author?.username,
-    authorId: message?.author?.id,
-  });
   const author = message?.author;
   if (author) {
     const { id: authorId } = author;
     if (authorId !== process.env.DC_BOT_ID) {
       const prompt = message.content;
-      let completion;
-      let responseText;
-      try {
-        completion = await openai.createCompletion({
-          prompt,
-          model: process.env.GPT_MODEL,
-          max_tokens: 2048,
-        });
-        responseText = completion.data?.choices?.[0]?.text || "";
-      } catch (e) {
-        console.error(e);
-        responseText = "the api not working now";
+      if (message.content.startsWith('!weather')) {
+        const args = message.content.split(' ');
+        const location = args.slice(1).join(' ');
+
+        try {
+          const response = await fetch('https://opendata.cwb.gov.tw/api/v1/rest/datastore/O-A0001-001?Authorization=CWB-764E7116-819C-42F3-9611-1C859945418F');
+          const data = await response.json();
+          const records = data['records']['location']
+          let replyMessage
+
+          for await (const record of records) {
+            const name = record.locationName
+            if (name !== location) {
+              continue
+            }
+            replyMessage = record
+          }
+
+          const time = replyMessage.time.obsTime
+          const weatherElement = replyMessage.weatherElement
+          const weather = weatherElement.slice(-1)[0].elementValue
+          const temperature = weatherElement[3].elementValue
+
+          message.channel.send(`${location} is now ${weather}, temperature is ${temperature} at ${time}`);
+          console.log('sent msg!')
+        } catch (error) {
+          console.error('Error fetching weather:', error);
+          message.reply('Sorry, there was an error fetching the weather information.');
+        }
       }
-      await message.channel.send(responseText);
+      else {
+        let completion;
+        let responseText;
+        try {
+          console.log('prompt', prompt)
+          responseText = prompt
+        }
+        // try {
+        //   completion = await openai.createCompletion({
+        //     prompt,
+        //     model: process.env.GPT_MODEL,
+        //     max_tokens: 2048,
+        //   });
+        //   responseText = completion.data?.choices?.[0]?.text || "";
+        // } 
+        catch (e) {
+          console.error(e);
+          responseText = "the api not working now";
+        }
+        await message.channel.send(responseText);
+      }
     }
   }
 };
