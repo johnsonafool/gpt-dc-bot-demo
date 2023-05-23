@@ -42,7 +42,9 @@ const handleMessage = async (message) => {
     if (authorId !== process.env.DC_BOT_ID) {
       const prompt = message.content;
       if (message.content.startsWith('!weather')) {
-        
+        const response = await fetch('https://opendata.cwb.gov.tw/api/v1/rest/datastore/O-A0001-001?Authorization=CWB-764E7116-819C-42F3-9611-1C859945418F');
+        const data = await response.json();
+        console.log(data)        
       }
       else {
         let completion;
